@@ -1,8 +1,12 @@
-//Get the input values
+//Controller
 function getValues(){
     let loanAmount = document.getElementById("loanAmount").value
     let loanTime = document.getElementById("time").value
     let interestRate = document.getElementById("interestRate").value
+    if (!loanAmount || !loanTime || !interestRate){
+        alert('Inputs must be numbers!')
+        return
+    }
     let rows = []
     let remainBalance = loanAmount
     let monthlyPayment = ((loanAmount)*(interestRate/1200)/(1-Math.pow((1+interestRate/1200),-loanTime))).toFixed(2)
@@ -27,7 +31,7 @@ function getValues(){
 
 }
 
-
+//Fill in the rows
 function fillInRow(rowObject,interestRate, remainBalance){
     rowObject['interest'] = (remainBalance*(interestRate/1200)).toFixed(2)
     rowObject['principal'] = (rowObject['payment'] - rowObject['interest']).toFixed(2)
@@ -35,7 +39,7 @@ function fillInRow(rowObject,interestRate, remainBalance){
 
 }
 
-
+//Display the results
 function displayResults(rowsArr,loanAmount, totalInterest){
     let tableBody = document.getElementById("results");
     let templateRow = document.getElementById("tmpResults")
@@ -56,7 +60,7 @@ function displayResults(rowsArr,loanAmount, totalInterest){
         tableBody.appendChild(tableRow)
     }
     let displayMonthlyPayments = document.getElementById("monthlyPayments")
-    displayMonthlyPayments.innerHTML = `$${rowsArr[0]['payment']}`
+    displayMonthlyPayments.innerHTML = `$${rowsArr[0]["payment"]}`
 
     let totalPrin = document.getElementById("totalPrincipal")
     totalPrin.innerHTML = `$${loanAmount}`

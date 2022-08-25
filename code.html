@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="h-100">
   <head>
-    <title>App Name: A coding Project By John Zhang</title>
+    <title>Loan helper: A coding Project By John Zhang</title>
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta
@@ -24,13 +24,13 @@
 
     <link rel="stylesheet" href="css/site.css" />
     <link rel="icon" type="image/png" href="img/favicon-32x32.png" />
-    <link rel="stylesheet" href="css/prism.css">
+    <link rel="stylesheet" href="css/prism.css" />
     <!-- Convert this to an external style sheet -->
   </head>
 
   <body class="d-flex flex-column h-100">
     <!-- Nav section -->
-   <nav class="navbar navbar-expand-md navbar-dark fixed-top"> 
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top">
       <div class="container-fluid">
         <a class="navbar-brand" href="#"
           ><img
@@ -53,46 +53,143 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav me-auto mb-2 mb-md-0">
             <li class="nav-item">
-              <a class="nav-link" href="index.html">Home</a
-              >
+              <a class="nav-link" href="index.html">Home</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="app.html">The App</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="code.html">The Code</a>
+              <a class="nav-link active" aria-current="page" href="code.html"
+                >The Code</a
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link" target="_blank" href="#">Git Repo</a>
+              <a class="nav-link" target="_blank" href="https://github.com/Ningyu-Zhang98/LoanShark">Git Repo</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" target="_blank" href="#">About</a>
+              <a class="nav-link" target="_blank" href="https://johnzhang-portforlio.netlify.app/">About</a>
             </li>
           </ul>
         </div>
       </div>
-    </nav> 
+    </nav>
 
     <main class="flex-shrink-0">
       <div class="container my-3 py-5 px-5">
-        <h2 class="border-1 border-bottom border-dark">The Code for APP NAME</h2>
+        <h2 class="border-1 border-bottom border-dark">
+          The Code for APP NAME
+        </h2>
         <div class="row row-cols-1 row-cols-md-2">
-            <div class="col-lg-8">
-                <pre class="line-numbers">
+          <div class="col-lg-8">
+            <pre class="line-numbers">
                     <code class="language-javascript dark">
-                        //Call hello world
-                        function HelloWorld(){
-                        alert('hello world');
-                        }
+                      //Controller
+                      function getValues(){
+                          let loanAmount = document.getElementById("loanAmount").value
+                          let loanTime = document.getElementById("time").value
+                          let interestRate = document.getElementById("interestRate").value
+                          if (!loanAmount || !loanTime || !interestRate){
+                              alert('Inputs must be numbers!')
+                              return
+                          }
+                          let rows = []
+                          let remainBalance = loanAmount
+                          let monthlyPayment = ((loanAmount)*(interestRate/1200)/(1-Math.pow((1+interestRate/1200),-loanTime))).toFixed(2)
+                          let totalInterest = 0
+                          for (let index = 1; index <= loanTime; index++) {
+                              rowInfo = {
+                                  month:index, 
+                                  payment:monthlyPayment,
+                                  principal:0,
+                                  interest: 0,
+                                  totalInterest:0,
+                                  balance:0
+                              }
+                              fillInRow(rowInfo,interestRate,remainBalance)
+                              remainBalance = rowInfo.balance
+                              totalInterest += Number(rowInfo['interest'])
+                              rowInfo['totalInterest'] = totalInterest.toFixed(2)
+                              
+                              rows.push(rowInfo)
+                          }
+                          displayResults(rows,loanAmount, totalInterest)
+                      
+                      }
+                      
+                      //Fill in the rows
+                      function fillInRow(rowObject,interestRate, remainBalance){
+                          rowObject['interest'] = (remainBalance*(interestRate/1200)).toFixed(2)
+                          rowObject['principal'] = (rowObject['payment'] - rowObject['interest']).toFixed(2)
+                          rowObject['balance'] = (remainBalance - rowObject['principal']).toFixed(2)
+                      
+                      }
+                      
+                      //Display the results
+                      function displayResults(rowsArr,loanAmount, totalInterest){
+                          let tableBody = document.getElementById("results");
+                          let templateRow = document.getElementById("tmpResults")
+                          tableBody.innerHTML = ""
+                      
+                          for (let index = 0; index < rowsArr.length; index++) {
+                              let rowOjt = rowsArr[index];
+                      
+                              let tableRow = document.importNode(templateRow.content, true);
+                              let rowCols = tableRow.querySelectorAll('td');
+                              rowCols[0].textContent = rowOjt['month']
+                              rowCols[1].textContent = rowOjt['payment']
+                              rowCols[2].textContent = rowOjt['principal']
+                              rowCols[3].textContent = rowOjt['interest']
+                              rowCols[4].textContent = rowOjt['totalInterest']
+                              rowCols[5].textContent = rowOjt['balance']
+                              
+                              tableBody.appendChild(tableRow)
+                          }
+                          let displayMonthlyPayments = document.getElementById("monthlyPayments")
+                          displayMonthlyPayments.innerHTML = `$${rowsArr[0]["payment"]}`
+                      
+                          let totalPrin = document.getElementById("totalPrincipal")
+                          totalPrin.innerHTML = `$${loanAmount}`
+                      
+                          let total = document.getElementById("totalInterests")
+                          total.innerHTML = `$${totalInterest.toFixed(2)}`
+                      
+                          let totalCost = document.getElementById("totalCost")
+                          totalCost.innerHTML = `$${(Number(totalInterest) + Number(loanAmount)).toFixed(2)}`
+                      
+                      }
+                      
+
+
+
                     </code>
                 </pre>
-            </div>
-            <div class="col-lg-4">
-                <p>The code is structure in one fucntion</p>
-                <h5>Hello World</h5>
-                <p>Hello World is a function that displays an alert with a message of Hello World</p>
+          </div>
+          <div class="col-lg-4">
+            <h5>getValues()</h5>
+            <p>
+              Get the inputs from the user. The three parameters are loan
+              amount, loan time in months, interest rate. The row object is
+              initiated in this function and partially filled and then it's past
+              to fillInRow() to be fully filled.
+            </p>
 
-            </div>
+            <h5>fillInRow(rowObject, interestRate, remainBalance)</h5>
+            <p>
+              The interest for this current month is calculated as the previous
+              remaining balance * interest rate/1200. The principal is total
+              month payment minus the interest. The total month payment is
+              constant for every month so it's prefilled in the getValues()
+              function. The remaining balance for this month is the previous
+              remaining balance minus the principal payment for this month.
+            </p>
+
+            <h5>displayResults(rows, loanAmount, totalInterest)</h5>
+            <p>
+              This function utilizes the feature that we can import template from the HTML file. It made a copy from the template and used the row object to fill in the template.
+            </p>
+
+
+          </div>
         </div>
       </div>
     </main>
@@ -145,13 +242,12 @@
 
     <script src="js/prism.js"></script>
     <script>
-        Prism.plugins.NormalizeWhitespace.setDefaults({
-            'remove-trailing': true,
-            'remove-indent': true,
-            'left-trim': true,
-            'right-trim': true
-        })
+      Prism.plugins.NormalizeWhitespace.setDefaults({
+        "remove-trailing": true,
+        "remove-indent": true,
+        "left-trim": true,
+        "right-trim": true,
+      });
     </script>
-
   </body>
 </html>
